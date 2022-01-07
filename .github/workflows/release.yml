@@ -1,0 +1,25 @@
+name: Release
+
+# 触发器
+on:
+  push:
+    branches:
+      - rel
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/checkout@v2
+        with:
+          repository: qiushui95/GithubActionShell
+          path: "sh"
+      - name: 更新打包版本
+        run: echo hello
+      - name: 配置git
+        run: bash ./sh/git_config.sh
+      - name: 提交更改
+        run: bash git push origin rel:master

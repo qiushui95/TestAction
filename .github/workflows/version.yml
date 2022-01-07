@@ -1,0 +1,32 @@
+name: Update Version
+
+# 触发器
+on:
+  push:
+    branches:
+      - version
+
+jobs:
+  update_version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          # token: ${{secrets.PUSH_ACTION_TOKEN}}
+          fetch-depth: 0
+      - uses: actions/checkout@v2
+        with:
+          repository: qiushui95/GithubActionShell
+          path: "sh"
+      - name: 更新打包版本
+        run: bash ./sh/update_version.sh version.txt
+      - name: 设置版本环境变量
+        run: bash ./sh/env_version.sh version.txt LIB_VERSION
+      - name: 配置git
+        run: bash ./sh/git_config.sh
+      - name: 提交更改
+
+        run: |
+          git add version.txt
+          git commit -m "更新打包版本为${{env.LIB_VERSION}}"
+          git push origin version:rel
